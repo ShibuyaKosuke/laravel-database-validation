@@ -1,0 +1,33 @@
+{
+    "name": "shibuyakosuke/laravel-database-validation",
+    "description": "Validation rules generator",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "KosukeShibuya",
+            "email": "shibuya@imagenious.co.jp"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "ShibuyaKosuke\\LaravelDatabaseValidator\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "ShibuyaKosuke\\LaravelDatabaseValidator\\ValidationServiceProvider"
+            ],
+            "aliases": {
+                "DbRule": "ShibuyaKosuke\\LaravelDatabaseValidator\\Facades\\ValidationRule"
+            }
+        }
+    },
+    "require": {
+        "shibuyakosuke/laravel-database-utilities": "dev-master"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.5"
+    }
+}
