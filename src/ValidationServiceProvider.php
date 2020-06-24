@@ -4,6 +4,7 @@ namespace ShibuyaKosuke\LaravelDatabaseValidator;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
+use ShibuyaKosuke\LaravelDatabaseValidator\Console\RulePublishCommand;
 use ShibuyaKosuke\LaravelDatabaseValidator\Rule\Repository;
 
 /**
@@ -16,14 +17,27 @@ class ValidationServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        $this->registerCommands();
         $this->registerPath('rules');
     }
 
     public function provides()
     {
         return [
-            'rules'
+            'rules',
+            'command.shibuyakosuke.publish.rule'
         ];
+    }
+
+    protected function registerCommands()
+    {
+        $this->app->singleton('command.shibuyakosuke.publish.rule', function () {
+            return new RulePublishCommand();
+        });
+
+        $this->commands([
+            'command.shibuyakosuke.publish.rule'
+        ]);
     }
 
     protected function registerPath($name)
