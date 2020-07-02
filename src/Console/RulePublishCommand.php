@@ -88,10 +88,10 @@ class RulePublishCommand extends Command
                 $type = 'date';
                 break;
             case 'time':
-                $type = 'date_format:\'H:i:s\'';
+                $type = 'date_format:"H:i:s"';
                 break;
             case 'year':
-                $type = 'date_format:\'Y\'';
+                $type = 'date_format:"Y"';
                 break;
             case 'char':
             case 'varchar':
