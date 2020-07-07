@@ -3,6 +3,7 @@
 namespace ShibuyaKosuke\LaravelDatabaseValidator\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use ShibuyaKosuke\LaravelDatabaseUtilities\Models\Column;
 use ShibuyaKosuke\LaravelDatabaseUtilities\Models\Table;
 
@@ -55,8 +56,8 @@ class RulePublishCommand extends Command
         $rule = [];
         $rule[] = $column->IS_NULLABLE == 'YES' ? 'nullable' : 'required';
         $rule[] = $this->getType($column);
-        if ($column->CHARACTER_MAXIMUM_LENGTH) {
-            $rule[] = sprintf('max:%d', $column->CHARACTER_MAXIMUM_LENGTH);
+        if ($this->getMax($column)) {
+            $rule[] = sprintf('max:%d', $this->getMax($column));
         }
         if ($column->belongs_to) {
             $rule[] = sprintf('exists:%s,%s', $column->belongs_to->TABLE_NAME, $column->belongs_to->COLUMN_NAME);
@@ -107,5 +108,40 @@ class RulePublishCommand extends Command
                 break;
         }
         return $type;
+    }
+
+    /**
+     * @param Column $column
+     * @return float|int
+     */
+    protected function getMax(Column $column)
+    {
+        $unsigned = Str::contains($column->COLUMN_TYPE, 'unsigned');
+        switch ($column->DATA_TYPE) {
+            case 'bigint':
+                $max = 9223372036854775807;
+                break;
+            case 'int':
+                $max = 2147483647;
+                break;
+            case 'mediumint':
+                $max = 8388607;
+                break;
+            case 'smallint':
+                $max = 32767;
+                break;
+            case 'tinyint':
+                $max = 127;
+                break;
+            default:
+                return $column->CHARACTER_MAXIMUM_LENGTH;
+        }
+        if ($unsigned) {
+            if (floor(PHP_INT_MAX / 2) > $max) {
+                return $max * 2 + 1;
+            }
+            return PHP_INT_MAX;
+        }
+        return $max;
     }
 }
