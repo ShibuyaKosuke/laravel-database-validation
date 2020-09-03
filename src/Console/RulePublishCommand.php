@@ -56,12 +56,22 @@ class RulePublishCommand extends Command
         $rule = [];
         $rule[] = $column->IS_NULLABLE == 'YES' ? 'nullable' : 'required';
         $rule[] = $this->getType($column);
+
+        // max
         if ($this->getMax($column)) {
             $rule[] = sprintf('max:%d', $this->getMax($column));
         }
+
+        // exists
         if ($column->belongs_to) {
             $rule[] = sprintf('exists:%s,%s', $column->belongs_to->TABLE_NAME, $column->belongs_to->COLUMN_NAME);
         }
+
+        // unique
+        if ($this->unique($column)) {
+            $rule[] = sprintf('unique:%s,%s', $column->TABLE_NAME, $column->COLUMN_NAME);
+        }
+
         return array_map(function ($item) {
             return sprintf("'%s'", $item);
         }, $rule);
@@ -144,4 +154,10 @@ class RulePublishCommand extends Command
         }
         return $max;
     }
+
+    protected function unique(Column $column)
+    {
+       return $column->COLUMN_KEY == 'UNI';
+    }
+
 }
