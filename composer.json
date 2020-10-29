@@ -25,7 +25,7 @@
         }
     },
     "require": {
-        "shibuyakosuke/laravel-database-utilities": "^1.0"
+        "shibuyakosuke/laravel-database-utilities": "dev-master"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.5"
